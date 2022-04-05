@@ -1,9 +1,9 @@
 # Solution Description
-This solution creates a resource group, virtual network, route tables and routes on Azure with terraform codes.
+This solution creates a default & custom route tables, routes and subnets route table association on Azure with terraform codes.
 
 # References:
-* [Azure Route](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/route)
 * [Azure Route Table](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/route_table)
+* [Azure Route](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/route)
 * [Azure Subnet Route Table Association](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet_route_table_association)
 
 # Notes
