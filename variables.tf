@@ -26,17 +26,6 @@ variable "vnetwork_name" {
   default     = "vnet-azure-westeurope-001"
 }
 
-variable "vnet_address_space" {
-  description = "The address space to be used for the Azure virtual network."
-  type        = list(any)
-  default     = ["10.1.0.0/16"]
-}
-variable "dns_servers" {
-  description = "List of dns servers to use for virtual network"
-  type        = list(any)
-  default     = []
-}
-
 variable "subnets" {
   description = "For each subnet, create an object that contain fields"
   type        = map(any)
