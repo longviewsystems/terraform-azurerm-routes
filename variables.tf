@@ -19,34 +19,6 @@ variable "tags" {
   }
 }
 
-# # vnet 
-variable "vnetwork_name" {
-  description = "Name of your Azure Virtual Network"
-  type        = string
-  default     = "vnet-azure-westeurope-001"
-}
-
-variable "subnets" {
-  description = "For each subnet, create an object that contain fields"
-  type        = map(any)
-  default = {
-    Subnet_1 = {
-      name                  = "subnet1"
-      subnet_address_prefix = ["10.1.0.0/24"]
-      service_endpoints     = ["Microsoft.Sql"]
-      subnetRouteSet        = "default"
-    }
-    Subnet_2 = {
-      name                  = "subnet2"
-      subnet_address_prefix = ["10.1.2.0/24"]
-      service_endpoints     = ["Microsoft.Sql"]
-      subnetRouteSet        = "custom"
-
-    }
-  }
-}
-
-# default route variables
 variable "default_route_table_name" {
   type        = string
   description = "The name of the RouteTable being created."
