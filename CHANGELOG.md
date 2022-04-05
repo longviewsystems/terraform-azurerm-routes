@@ -1,3 +1,5 @@
+# 1.0.0 (2022-04-05)
+
 ### Features
 
 * **azboard-17347:** implement ossf/allstar at repo level ([9647656](https://github.com/longviewsystems/terraform-azurerm-common-template/commit/964765676efa5400930c734da1963157f60250e0))
