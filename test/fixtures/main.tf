@@ -40,9 +40,8 @@ module "routes" {
   resource_group_name = azurerm_resource_group.resource_group.name
   route_tables = {
     route_table_default = { # key value for route table
-      route_table_name              = "default-route-table"
+      route_table_name              = "default"
       disable_bgp_route_propagation = true
-      RouteType                     = "default"
       route_entries = {
         default_route1 = { # key value for routes
           route_name             = "default"
@@ -59,9 +58,8 @@ module "routes" {
       }
     }
     route_table_custom = {
-      route_table_name              = "custom-route-table"
+      route_table_name              = "custom"
       disable_bgp_route_propagation = true
-      RouteType                     = "custom"
       route_entries = {
         custom_route1 = {
           route_name             = "custom"

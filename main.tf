@@ -4,7 +4,7 @@ resource "azurerm_route_table" "route_table" {
   location                      = var.location
   resource_group_name           = var.resource_group_name
   disable_bgp_route_propagation = each.value.disable_bgp_route_propagation
-  tags                          = merge({ "RouteType" = format("%s", each.value.RouteType) }, var.tags, )
+  tags                          = var.tags
   dynamic "route" {
     for_each = each.value.route_entries
     content {

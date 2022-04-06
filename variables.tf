@@ -24,7 +24,6 @@ variable "route_tables" {
   type = map(object({
     route_table_name              = string
     disable_bgp_route_propagation = string
-    RouteType                     = string
     route_entries = map(object({
       route_name             = string
       address_prefix         = string

@@ -16,3 +16,19 @@ output "route_table_names" {
     for route_table in azurerm_route_table.route_table : route_table.name
   ]
 }
+
+output "default_route_table_id" {
+  description = "Return default route table ID's created"
+  value = {
+    for k, route_table in azurerm_route_table.route_table : k => route_table.id
+    if lookup(route_table, "name", "default") == "default"
+  }
+}
+
+output "custom_route_table_id" {
+  description = "Return custom route table ID's created"
+  value = {
+    for k, route_table in azurerm_route_table.route_table : k => route_table.id
+    if lookup(route_table, "name", "default") != "default"
+  }
+}
