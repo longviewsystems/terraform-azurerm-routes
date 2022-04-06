@@ -35,17 +35,47 @@ resource "azurerm_subnet" "subnet" {
 
 # create default & custom Route table and routes
 module "routes" {
-  source                         = "../../" # testing root module
-  custom_next_hop_in_ip_address  = null
-  custom_route_address_prefixes  = ["10.0.3.0/24", "0.0.0.0/0"]
-  custom_route_names             = ["custom1", "custom2"]
-  custom_route_nexthop_types     = ["VnetLocal", "Internet"]
-  custom_route_table_name        = "route-table-custom"
-  default_next_hop_in_ip_address = null
-  default_route_address_prefixes = ["10.0.2.0/24", "0.0.0.0/0"]
-  default_route_names            = ["default1", "default2"]
-  default_route_nexthop_types    = ["VnetLocal", "Internet"]
-  default_route_table_name       = "route-table-default"
-  location                       = azurerm_resource_group.resource_group.location
-  resource_group_name            = azurerm_resource_group.resource_group.name
+  source              = "../../" # testing root module
+  location            = azurerm_resource_group.resource_group.location
+  resource_group_name = azurerm_resource_group.resource_group.name
+  route_tables = {
+    route_table_default = { # key value for route table
+      route_table_name              = "default-route-table"
+      disable_bgp_route_propagation = true
+      RouteType                     = "default"
+      route_entries = {
+        default_route1 = { # key value for routes
+          route_name             = "default"
+          address_prefix         = "10.0.2.0/24"
+          next_hop_type          = "VnetLocal"
+          next_hop_in_ip_address = null
+        }
+        default_route2 = { # key value for routes
+          route_name             = "AzureFireWall"
+          address_prefix         = "0.0.0.0/0"
+          next_hop_type          = "Internet"
+          next_hop_in_ip_address = null
+        }
+      }
+    }
+    route_table_custom = {
+      route_table_name              = "custom-route-table"
+      disable_bgp_route_propagation = true
+      RouteType                     = "custom"
+      route_entries = {
+        custom_route1 = {
+          route_name             = "custom"
+          address_prefix         = "10.0.0.16/28"
+          next_hop_type          = "VirtualAppliance"
+          next_hop_in_ip_address = "10.0.0.10"
+        }
+        custom_route2 = {
+          route_name             = "AzureFireWall"
+          address_prefix         = "0.0.0.0/0"
+          next_hop_type          = "Internet"
+          next_hop_in_ip_address = null
+        }
+      }
+    }
+  }
 } 
