@@ -25,7 +25,7 @@ resource "azurerm_virtual_network" "vnet" {
 
 resource "azurerm_subnet" "subnet" {
   for_each                                       = var.subnets
-  name                                           = "${each.value.name}${each.value.subnetRouteSet}"
+  name                                           = each.value.name
   resource_group_name                            = azurerm_resource_group.resource_group.name
   virtual_network_name                           = azurerm_virtual_network.vnet.name
   address_prefixes                               = each.value.subnet_address_prefix
@@ -33,64 +33,47 @@ resource "azurerm_subnet" "subnet" {
   enforce_private_link_endpoint_network_policies = lookup(each.value, "enforce_private_link_endpoint_network_policies", null)
 }
 
-# create default Route table
-resource "azurerm_route_table" "default_route_table" {
-  name                          = var.default_route_table_name
-  location                      = var.location
-  resource_group_name           = azurerm_resource_group.resource_group.name
-  disable_bgp_route_propagation = var.default_disable_bgp_route_propagation
-}
-
-# create Routes
-resource "azurerm_route" "default_routes" {
-  count                  = length(var.default_route_names)
-  name                   = var.default_route_names[count.index]
-  resource_group_name    = azurerm_resource_group.resource_group.name
-  route_table_name       = azurerm_route_table.default_route_table.name
-  address_prefix         = var.default_route_address_prefixes[count.index]
-  next_hop_type          = var.default_route_nexthop_types[count.index]
-  next_hop_in_ip_address = var.default_route_nexthop_types == "VirtualAppliance" ? (var.default_next_hop_in_dynamic_private_ip != null && var.default_next_hop_in_dynamic_private_ip != "null" && var.default_next_hop_in_dynamic_private_ip != "" ? var.default_next_hop_in_dynamic_private_ip : var.default_next_hop_in_ip_address) : null
-}
-
-
-resource "azurerm_subnet_route_table_association" "default_route_table_association" {
-  for_each = {
-    for key, value in var.subnets :
-    key => value
-    if lookup(value, "subnetRouteSet", "default") == "default"
+# create default & custom Route table and routes
+module "routes" {
+  source              = "../../" # testing root module
+  location            = azurerm_resource_group.resource_group.location
+  resource_group_name = azurerm_resource_group.resource_group.name
+  route_tables = {
+    route_table_default = { # key value for route table
+      route_table_name              = "default"
+      disable_bgp_route_propagation = true
+      route_entries = {
+        default_route1 = { # key value for routes
+          route_name             = "default"
+          address_prefix         = "10.0.2.0/24"
+          next_hop_type          = "VnetLocal"
+          next_hop_in_ip_address = null
+        }
+        default_route2 = { # key value for routes
+          route_name             = "AzureFireWall"
+          address_prefix         = "0.0.0.0/0"
+          next_hop_type          = "Internet"
+          next_hop_in_ip_address = null
+        }
+      }
+    }
+    route_table_custom = {
+      route_table_name              = "custom"
+      disable_bgp_route_propagation = true
+      route_entries = {
+        custom_route1 = {
+          route_name             = "custom"
+          address_prefix         = "10.0.0.16/28"
+          next_hop_type          = "VirtualAppliance"
+          next_hop_in_ip_address = "10.0.0.10"
+        }
+        custom_route2 = {
+          route_name             = "AzureFireWall"
+          address_prefix         = "0.0.0.0/0"
+          next_hop_type          = "Internet"
+          next_hop_in_ip_address = null
+        }
+      }
+    }
   }
-  subnet_id      = azurerm_subnet.subnet[each.key].id
-  route_table_id = azurerm_route_table.default_route_table.id
-}
-
-
-# create custom Route table
-resource "azurerm_route_table" "custom_route_table" {
-  name                          = var.custom_route_table_name
-  location                      = var.location
-  resource_group_name           = azurerm_resource_group.resource_group.name
-  disable_bgp_route_propagation = var.custom_disable_bgp_route_propagation
-}
-
-
-# create custom Routes
-resource "azurerm_route" "custom_routes" {
-  count                  = length(var.custom_route_names)
-  name                   = var.custom_route_names[count.index]
-  resource_group_name    = azurerm_resource_group.resource_group.name
-  route_table_name       = azurerm_route_table.custom_route_table.name
-  address_prefix         = var.custom_route_address_prefixes[count.index]
-  next_hop_type          = var.custom_route_nexthop_types[count.index]
-  next_hop_in_ip_address = var.custom_route_nexthop_types == "VirtualAppliance" ? (var.custom_next_hop_in_dynamic_private_ip != null && var.custom_next_hop_in_dynamic_private_ip != "null" && var.custom_next_hop_in_dynamic_private_ip != "" ? var.custom_next_hop_in_dynamic_private_ip : var.custom_next_hop_in_ip_address) : null
-}
-
-
-resource "azurerm_subnet_route_table_association" "custom_route_table_association" {
-  for_each = {
-    for key, value in var.subnets :
-    key => value
-    if lookup(value, "subnetRouteSet", "default") != "default"
-  }
-  subnet_id      = azurerm_subnet.subnet[each.key].id
-  route_table_id = azurerm_route_table.custom_route_table.id
-}
+} 
