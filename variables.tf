@@ -10,15 +10,6 @@ variable "location" {
   default     = "westeurope"
 }
 
-variable "tags" {
-  type        = map(any)
-  description = "Resource tags"
-  default = {
-    environment = "test"
-    managed_by  = "terratest"
-  }
-}
-
 variable "route_tables" {
   description = "Create Route Tables with routes"
   type = map(object({
@@ -32,4 +23,13 @@ variable "route_tables" {
     }))
   }))
   default = null
+}
+
+variable "tags" {
+  type        = map(any)
+  description = "Resource tags"
+  default = {
+    environment = "test"
+    managed_by  = "terratest"
+  }
 }
