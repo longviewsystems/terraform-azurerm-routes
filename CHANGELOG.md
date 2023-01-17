@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/longviewsystems/terraform-azurerm-routes/compare/1.0.2...1.1.0) (2023-01-17)
+
+
+### Features
+
+* **azboard-72259:** Upgrade provider version to v3 ([65757f9](https://github.com/longviewsystems/terraform-azurerm-routes/commit/65757f9afe0e93180480b98817d811079d507e06))
+
 ## [1.0.2](https://github.com/longviewsystems/terraform-azurerm-routes/compare/1.0.1...1.0.2) (2022-05-25)
 
 ## [1.0.1](https://github.com/longviewsystems/terraform-azurerm-routes/compare/1.0.0...1.0.1) (2022-04-07)
